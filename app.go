@@ -20,6 +20,7 @@ import (
 // --------------------------------------------------------------------------------
 
 type Game struct {
+	Id             int
 	Title          string
 	CurrentPlayers string
 	PeakToday      string
@@ -99,8 +100,9 @@ func steam_stats() []Game {
 
 	// Add relevant data to games array (top 10 games)
 	c.OnHTML("#detailStats > table > tbody", func(e *colly.HTMLElement) {
-		for count := 3; count < 12; count++ {
+		for count := 3; count < 13; count++ {
 			game := Game{
+				Id:             count - 2,
 				Title:          e.ChildText("tr:nth-child(" + strconv.Itoa(count) + ") > td:nth-child(4)"),
 				CurrentPlayers: e.ChildText("tr:nth-child(" + strconv.Itoa(count) + ") > td:nth-child(1)"),
 				PeakToday:      e.ChildText("tr:nth-child(" + strconv.Itoa(count) + ") > td:nth-child(2)"),
@@ -218,9 +220,11 @@ func main() {
 		fmt.Println("--------------------------------------------------------------------------------")
 		fmt.Println("Let's catch you up on what people are playing today...\n")
 		for _, result := range results {
+			fmt.Println("Rank: ", result.Game.Id)
 			fmt.Println("Game: " + result.Game.Title)
 			fmt.Println("Current Players: " + result.Game.CurrentPlayers)
 			fmt.Println("Peak Today: " + result.Game.PeakToday)
+			fmt.Println("Store Link: " + result.Game.GameLink)
 			fmt.Println("Trending Video: " + "'" + result.GameVideo.Title + "'" + " ---> by " + result.GameVideo.Channel)
 			fmt.Println(result.GameVideo.Link)
 			fmt.Println("\n")
