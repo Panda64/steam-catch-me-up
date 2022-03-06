@@ -157,6 +157,16 @@ func youtube(game_title string) Video {
 		fmt.Println("Can not unmarshal JSON")
 	}
 
+	// Verifying API status
+	if len(result.Items) == 0 {
+		fmt.Println("The API quota has been reached. Please try again later.")
+		return Video{
+			Title:   "",
+			Link:    "",
+			Channel: "",
+		}
+	}
+
 	// Add relevant data to video struct
 	video := Video{
 		Title:   result.Items[0].Snippet.Title,
@@ -179,6 +189,9 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 
+	// Indicator of YouTube API status
+	active := true
+
 	// Get steam + YouTube data
 	var games = steam_stats()
 	var results = []Result{}
@@ -186,6 +199,11 @@ func main() {
 	// Add all stats to results array
 	for _, game := range games {
 		var video = youtube(game.Title)
+
+		if video.Title == "" {
+			active = false
+			break
+		}
 
 		result := Result{
 			Game:      game,
@@ -196,15 +214,17 @@ func main() {
 	}
 
 	// Print results
-	fmt.Println("--------------------------------------------------------------------------------")
-	fmt.Println("Let's catch you up on what people are playing today...\n")
-	for _, result := range results {
-		fmt.Println("Game: " + result.Game.Title)
-		fmt.Println("Current Players: " + result.Game.CurrentPlayers)
-		fmt.Println("Peak Today: " + result.Game.PeakToday)
-		fmt.Println("Trending Video: " + "'" + result.GameVideo.Title + "'" + " ---> by " + result.GameVideo.Channel)
-		fmt.Println(result.GameVideo.Link)
-		fmt.Println("\n")
+	if active {
+		fmt.Println("--------------------------------------------------------------------------------")
+		fmt.Println("Let's catch you up on what people are playing today...\n")
+		for _, result := range results {
+			fmt.Println("Game: " + result.Game.Title)
+			fmt.Println("Current Players: " + result.Game.CurrentPlayers)
+			fmt.Println("Peak Today: " + result.Game.PeakToday)
+			fmt.Println("Trending Video: " + "'" + result.GameVideo.Title + "'" + " ---> by " + result.GameVideo.Channel)
+			fmt.Println(result.GameVideo.Link)
+			fmt.Println("\n")
+		}
+		fmt.Println("--------------------------------------------------------------------------------")
 	}
-	fmt.Println("--------------------------------------------------------------------------------")
 }
