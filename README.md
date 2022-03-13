@@ -4,7 +4,7 @@ This simple program takes the current top 10 games on steam (by player count) an
 
 ## Usage
 
-In order to properly run this program, you must have a [YouTube Data API](https://developers.google.com/youtube/v3/getting-started) developer key. After putting your key in a `.env` file under the variable name `YOUTUBE_API_KEY`, you can then run the program by
+In order to properly run this program, you must have a [YouTube Data API](https://developers.google.com/youtube/v3/getting-started) developer key. After putting your key in a `.env` file under the variable name `YOUTUBE_API_KEY`, you can then run the program with
 
 ```bash
 $ go run app.go
